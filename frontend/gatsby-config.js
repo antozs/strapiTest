@@ -7,6 +7,10 @@
 /**
  * @type {import('gatsby').GatsbyConfig}
  */
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 module.exports = {
   siteMetadata: {
     title: `Gatsby Default Starter`,
@@ -16,11 +20,50 @@ module.exports = {
   },
   plugins: [
     `gatsby-plugin-image`,
+    `gatsby-plugin-material-ui`,
+    {
+      resolve: `gatsby-plugin-web-font-loader`,
+      options: {
+        google: {
+          families: ['Philosopher', 'Montserrat']
+        }
+      },
+    },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `images`,
         path: `${__dirname}/src/images`,
+      },
+    },
+    {
+      resolve: `gatsby-source-strapi`,
+      options: {
+        apiURL: process.env.STRAPI_API_URL || "http://localhost:1337",
+
+        accessToken: process.env.STRAPI_TOKEN,
+        collectionTypes: [
+          {
+            singularName: "product",
+          },
+          {
+            singularName: "variant",
+          },
+        ],
+        preview: true,
+        queryLimit: 1000,
+        //token: process.env.STRAPI_TOKEN,
+        // collectionTypes: [
+        //   {
+        //     singularName: "product",
+        //   },
+        //   {
+        //     singularName: "category",
+        //   },
+        //   {
+        //     singularName: "variant",
+        //   },
+        // ],
       },
     },
     `gatsby-transformer-sharp`,
@@ -34,20 +77,10 @@ module.exports = {
         background_color: `#663399`,
         // This will impact how browsers show your PWA/website
         // https://css-tricks.com/meta-theme-color-and-trickery/
-        // theme_color: `#663399`,
+        theme_color: `#663399`,
         display: `minimal-ui`,
-        icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
+        icon: `src/images/twitter.svg`, // This path is relative to the root of the site.
       },
-      
-    },
-    {
-      resolve: `gatsby-source-strapi`,
-      options: {
-        apiURL: `http://127.0.0.1:1337`,
-        collectionTypes: [
-          `product`
-        ]
-      }
     }
   ],
 }
