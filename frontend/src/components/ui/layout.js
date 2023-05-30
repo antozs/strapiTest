@@ -18,7 +18,7 @@ const Layout = ({ children }) => {
           edges {
            node {
              name
-             
+             id
            }
         }
       }

@@ -8,11 +8,19 @@ import IconButton from "@material-ui/core/IconButton"
 import Tabs from "@material-ui/core/Tabs"
 import Tab from "@material-ui/core/Tab"
 import { makeStyles } from "@material-ui/core/styles"
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import Hidden from '@material-ui/core/Hidden';
+import SwipeableDrawer  from "@material-ui/core/SwipeableDrawer";
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+
 
 import search from "../../images/search.svg"
 import cartIcon from "../../images/cart.svg"
 import account from "../../images/account-header.svg"
-import menu from "../../images/menu.svg"
+import menu from '../../images/menu.svg';
+import { useState } from "react"
 
 const useStyles = makeStyles(theme => ({
   coloredIndicator: {
@@ -70,29 +78,60 @@ const useStyles = makeStyles(theme => ({
 
 export default function Header({categories}){
   const classes = useStyles();
-  console.log("HEADER ",categories)
+  const matchesMD = useMediaQuery((theme)=> theme.breakpoints.down('md'));
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // const iOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const routes = [...categories, {node: { name: 'Contact Us', id:'contact'}}];
+  const drawer = (
+  <SwipeableDrawer
+  open={drawerOpen}
+  onOpen={()=>setDrawerOpen(true)}
+  onClose={()=> setDrawerOpen(false)}
+  // disableBackdropTransition={!iOS}
+  // disableDiscovery={iOS}
+  >
+    <List disablePadding>
+      {
+         routes.map((route)=>{
+          return (
+          <ListItem divider button key={route.node.id}>
+              <ListItemText primary={route.node.name}/>
+          </ListItem>)
+          })
+      }
+    </List>
+  </SwipeableDrawer>)
+
+  const tabs = (
+    <Tabs value={0}>
+          {
+            routes.map((route, index) =>{
+            return (
+              <Tab label={route.node.name} key={route.node.id}></Tab>
+            )
+          })
+          }
+        </Tabs>
+  );
   return (
     <AppBar>
       <Toolbar>
         <Button>
           <Typography variant="h1">Var X</Typography>
         </Button>
-        <Tabs value={0}
-        >
-          <Tab label="Hats"></Tab>
-          <Tab label="Hoodies"></Tab>
-          <Tab label="Shirts"></Tab>
-          <Tab label="Contact Us"></Tab>
-        </Tabs>
+        {
+          matchesMD? drawer : tabs
+        }
         <IconButton>
           <img src={search} alt="search"/>
         </IconButton>
         <IconButton>
-          <img src={cartIcon} alt="search"/>
+          <img src={cartIcon} alt="cartIcon"/>
         </IconButton>
-        <IconButton>
-          <img src={account} alt="search"/>
-        </IconButton>
+          <IconButton onClick={()=> matchesMD? setDrawerOpen(true): null}>
+            <img src={matchesMD? menu : account} alt={matchesMD? 'menu': 'account'}/>
+          </IconButton>
       </Toolbar>
     </AppBar>
   )
