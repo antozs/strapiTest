@@ -83,6 +83,12 @@ export default function Header({categories}){
 
   // const iOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
   const routes = [...categories, {node: { name: 'Contact Us', id:'contact'}}];
+  const actions = [ {icon: search, alt: 'search', visible: !matchesMD},
+                    {icon: cartIcon, alt: 'cart', visible: !matchesMD, link: '/cart'},
+                    {icon: account, alt: 'account', visible: !matchesMD, link: '/account'},
+                    {icon: menu, alt: 'menu', visible: matchesMD, onClick: ()=> setDrawerOpen(true)},
+                  ];
+
   const drawer = (
   <SwipeableDrawer
   open={drawerOpen}
@@ -123,15 +129,26 @@ export default function Header({categories}){
         {
           matchesMD? drawer : tabs
         }
-        <IconButton>
+        {
+          actions.map(action => {
+            if(action.visible){
+              return (
+              <IconButton component={Link} to={action.link}>
+                <img className={classes.icon} src={action.icon} alt={action.alt}
+                onClick={action.onClick}/>
+              </IconButton>
+            )}
+          })
+        }
+        {/* <IconButton>
           <img src={search} alt="search"/>
         </IconButton>
         <IconButton>
           <img src={cartIcon} alt="cartIcon"/>
-        </IconButton>
-          <IconButton onClick={()=> matchesMD? setDrawerOpen(true): null}>
+        </IconButton> */}
+          {/* <IconButton onClick={()=> matchesMD? setDrawerOpen(true): null}>
             <img src={matchesMD? menu : account} alt={matchesMD? 'menu': 'account'}/>
-          </IconButton>
+          </IconButton> */}
       </Toolbar>
     </AppBar>
   )
