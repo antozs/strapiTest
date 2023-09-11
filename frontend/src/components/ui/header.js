@@ -88,7 +88,11 @@ export default function Header({categories}){
                     {icon: account, alt: 'account', visible: !matchesMD, link: '/account'},
                     {icon: menu, alt: 'menu', visible: matchesMD, onClick: ()=> setDrawerOpen(true)},
                   ];
-
+  const activeIndex = ()=> {
+    const found = routes.indexOf(routes.filter(({ node: { name, link } }) => (link || `/${name.toLowerCase()}`=== window.location.pathname))[0]);
+    console.log("found ",window.location.pathname, found);
+    return found === -1 ? false: found;
+  }
   const drawer = (
   <SwipeableDrawer
   open={drawerOpen}
@@ -99,22 +103,26 @@ export default function Header({categories}){
   >
     <List disablePadding>
       {
-         routes.map((route)=>{
+         routes.map((route, i)=>{
           return (
-          <ListItem divider button key={route.node.id}>
+          <ListItem
+          selected={activeIndex() === i}
+          divider button key={route.node.id} component={Link} to={route.node.link || `/${route.node.name.toLowerCase()}`}>
               <ListItemText primary={route.node.name}/>
           </ListItem>)
           })
-      }
+      }  
     </List>
   </SwipeableDrawer>)
 
   const tabs = (
-    <Tabs value={0}>
+    <Tabs value={activeIndex()}>
           {
             routes.map((route, index) =>{
             return (
-              <Tab label={route.node.name} key={route.node.id}></Tab>
+              <Tab label={route.node.name} key={route.node.id} component={Link} to={route.node.link || `/${route.node.name.toLowerCase()}`}
+              classes={{root: classes.tab}}
+              ></Tab>
             )
           })
           }
